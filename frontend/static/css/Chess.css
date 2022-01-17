@@ -1,0 +1,99 @@
+.chess {
+  display: flex;
+}
+
+.container_chess {
+  margin-top: 2rem;
+  margin-bottom: 6rem;
+  display: flex;
+  flex: 1;
+}
+
+.right_chess {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  padding-left: 2rem;
+}
+
+.left_chess {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding-left: 2rem;
+}
+
+.center_chess {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gpt3_head-content__list_chess {
+  display: flex;
+  flex-direction: column;
+  background-color: #111827;
+  padding: 2rem;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  max-height: 600px;
+  min-height: 600px;
+  overflow-y: auto;
+  padding-left: 2rem;
+}
+
+.gpt3_head-content__list-item_chess {
+  display: flex;
+  align-items: center;
+}
+
+.gpt3_head-content__list-item_chess p {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  color: #d1d5db;
+  margin: top 1.5rem;
+  flex: 1;
+}
+
+.gpt3_head-content__list-item_chess button {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  color: #d1d5db;
+  background: #10b981;
+  cursor: pointer;
+  outline: none;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 5px;
+  margin: 0.5rem;
+  margin-left: 0;
+  flex: 1;
+}
+
+@media screen and (max-width: 850px) {
+  .image {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .image {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .image {
+    display: none;
+  }
+}
