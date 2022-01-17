@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: daphne -b 0.0.0.0 -p 8001 game_server.asgi:application
+web: daphne chat_server.asgi:application --port $PORT --bind 0.0.0.0 -v2
