@@ -20,7 +20,7 @@ import image from "/static/images/horse_pic.png";
 import "/static/css/Lobby.css";
 
 const ws = new W3CWebSocket(
-  `ws://djangochessapp.herokuapp.com/ws/lobby/?token=${localStorage.getItem(
+  `wss://djangochessapp.herokuapp.com/ws/lobby/?token=${localStorage.getItem(
     "token"
   )}`
 );
