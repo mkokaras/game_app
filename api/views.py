@@ -55,6 +55,20 @@ class RegisterAPI(generics.GenericAPIView):
 
         user = serializer.save()
 
+        confirmation_token = default_token_generator.make_token(user)
+
+        activate_link_url = "https://djangochessapp.herokuapp.com/activation"
+
+        activation_link = f'{activate_link_url}/{user.id}/{confirmation_token}'
+
+        send_mail(
+            'Django Chess App Confirmatio',
+            'Please confirm your account by clicking on the following link:' + activation_link,
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
+
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": AuthToken.objects.create(user)[1]
