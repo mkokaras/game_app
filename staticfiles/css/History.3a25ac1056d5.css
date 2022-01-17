@@ -1,0 +1,100 @@
+.history {
+  display: flex;
+}
+
+.container_history {
+  display: flex;
+  flex: 1;
+}
+.right_history {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-right: 2rem;
+  margin-top: 3rem;
+}
+
+.left_history {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding-right: 2rem;
+  margin-top: 3rem;
+}
+
+.gpt3_head-content__list_hist {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-self: flex-start;
+  background-color: #111827;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  padding: 1rem;
+  max-height: 500px;
+  min-height: 500px;
+  overflow-y: auto;
+  border-radius: 7px;
+}
+
+.gpt3_head-content__list-item_hist p {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  color: #d1d5db;
+  margin: top 1.5rem;
+  flex: 1;
+}
+
+.gpt3_head-content__list-item_hist {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.gameId p {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  color: #d1d5db;
+  margin: top 1.5rem;
+  flex: 1;
+  padding-right: 2rem;
+}
+
+.gpt3_head-content__list-item_hist button {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  color: #d1d5db;
+  background: #10b981;
+  cursor: pointer;
+  outline: none;
+  padding: 0 1rem;
+  border: none;
+  border-radius: 5px;
+  margin: 0.5rem;
+  margin-left: 0;
+  flex: 1;
+}
+
+.grey_text_history {
+  font-family: Inter;
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 30px;
+  letter-spacing: -0.04em;
+  margin-bottom: 1rem;
+  color: #e5e5e5;
+}
