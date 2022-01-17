@@ -14,9 +14,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game_server.settings')
 
 asgi_application = get_asgi_application()
 
+from api.middleware import TokenAuthMiddleware
+
 import api.routing
 
-from api.middleware import TokenAuthMiddleware
 
 application = ProtocolTypeRouter({
     "http": asgi_application,
