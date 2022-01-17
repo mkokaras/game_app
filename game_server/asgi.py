@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
 import os
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
+import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'game_server.settings')
+
+django.setup()
 
 asgi_application = get_asgi_application()
 
