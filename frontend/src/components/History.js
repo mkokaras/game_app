@@ -21,6 +21,9 @@ function History({ history }) {
 
   function check_if_authenticated(data) {
     if (data.detail == "Invalid token.") {
+      if (localStorage.getItem("token")) {
+        localStorage.removeItem("token");
+      }
       history.push("/login");
       return false;
     }
