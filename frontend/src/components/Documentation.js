@@ -27,7 +27,9 @@ function Documentation() {
             <code>
               <div class="code_line_header">Request:</div>
               <div class="code_line">POST :</div>
-              <div class="code_line">http://localhost:8000/api/game</div>
+              <div class="code_line">
+                https://djangochessapp.herokuapp.com/api/game
+              </div>
               <div class="code_line">
                 Headers : &#123;Authorization: Token &#123;API-KEY&#125;&#125;
               </div>
@@ -54,7 +56,9 @@ function Documentation() {
             <code>
               <div class="code_line_header">Request:</div>
               <div class="code_line">POST :</div>
-              <div class="code_line">http://localhost:8000/api/ai-move</div>
+              <div class="code_line">
+                https://djangochessapp.herokuapp.com/api/ai-move
+              </div>
               <div class="code_line">
                 Headers : &#123;Authorization: Token &#123;API-KEY&#125;&#125;
               </div>
@@ -80,7 +84,9 @@ function Documentation() {
             <code>
               <div class="code_line_header">Request:</div>
               <div class="code_line">GET :</div>
-              <div class="code_line">http://localhost:8000/api/ai-move</div>
+              <div class="code_line">
+                https://djangochessapp.herokuapp.com/api/ai-move
+              </div>
               <div class="code_line">
                 Headers : &#123;Authorization: Token &#123;API-KEY&#125;&#125;
               </div>
