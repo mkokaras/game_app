@@ -40,7 +40,7 @@ function ChessApp({ history }) {
 
   useEffect(() => {
     ws = new W3CWebSocket(
-      `ws://127.0.0.1:8000/ws/chat/${id}/?token=${localStorage.getItem(
+      `wss://djangochessapp.herokuapp.com/ws/chat/${id}/?token=${localStorage.getItem(
         "token"
       )}`
     );

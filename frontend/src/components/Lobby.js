@@ -21,7 +21,9 @@ import "/static/css/Lobby.css";
 import TextField from "@material-ui/core/TextField";
 
 const ws = new W3CWebSocket(
-  `ws://127.0.0.1:8000/ws/lobby/?token=${localStorage.getItem("token")}`
+  `wss://djangochessapp.herokuapp.com/ws/lobby/?token=${localStorage.getItem(
+    "token"
+  )}`
 );
 
 function Lobby({ history }) {
