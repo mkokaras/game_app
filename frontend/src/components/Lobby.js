@@ -209,7 +209,7 @@ function Lobby({ history }) {
     }
   };
 
-  const handleAcceptClose4 = () => {
+  const handleAcceptClose4 = async () => {
     handlePlayAI();
   };
 
