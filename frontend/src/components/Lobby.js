@@ -210,7 +210,7 @@ function Lobby({ history }) {
   };
 
   const handleAcceptClose4 = async () => {
-    handlePlayAI();
+    await handlePlayAI();
   };
 
   const handleDeclineClose = async () => {
