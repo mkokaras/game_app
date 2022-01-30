@@ -31,9 +31,6 @@ class TokenAuthMiddleware(BaseMiddleware):
         except ValueError:
             token_key = None
 
-        print(token_key)
-
         scope['user'] = AnonymousUser() if token_key is None else await get_user(token_key)
 
-        print(scope['user'])
         return await super().__call__(scope, receive, send)

@@ -35,9 +35,5 @@
     "react-router": "^6.0.2",
     "react-router-dom": "^5.2.0",
     "websocket": "^1.0.34"
-  },
-  "engines": {
-    "node": "14.17.3",    
-    "npm": "6.14.13"     
   }
 }

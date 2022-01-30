@@ -50,13 +50,12 @@
   line-height: 24px;
   color: #d1d5db;
   margin: top 1.5rem;
-  flex: 1;
 }
 
 .gpt3_head-content__list-item_hist {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 
 .gameId p {
@@ -97,4 +96,58 @@
   letter-spacing: -0.04em;
   margin-bottom: 1rem;
   color: #e5e5e5;
+}
+
+.hist_item {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media screen and (max-width: 850px) {
+  .container_history {
+    flex-direction: column;
+  }
+
+  .right_history {
+    padding-right: 0;
+    margin-top: 0;
+  }
+
+  .left_history {
+    padding-right: 0;
+    margin-top: 0;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .container_history {
+    flex-direction: column;
+  }
+
+  .right_history {
+    padding-right: 0;
+    margin-top: 0;
+  }
+
+  .left_history {
+    padding-right: 0;
+    margin-top: 0;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .container_history {
+    flex-direction: column;
+  }
+
+  .right_history {
+    padding-right: 2rem;
+    margin-top: 3rem;
+  }
+
+  .left_history {
+    padding-right: 2rem;
+    margin-top: 3rem;
+  }
 }

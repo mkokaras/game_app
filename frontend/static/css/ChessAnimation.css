@@ -1,0 +1,31 @@
+.chess_animation {
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+.chess_animation .board {
+  width: 350px;
+  height: 350px;
+}
+
+@media screen and (max-width: 850px) {
+  .chess_animation .board {
+    width: 90vw;
+    height: 90vw;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .chess_animation .board {
+    width: 90vw;
+    height: 90vw;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .chess_animation .board {
+    width: 90vw;
+    height: 90vw;
+  }
+}

@@ -18,11 +18,10 @@ import GroupIcon from "@mui/icons-material/Group";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import image from "/static/images/horse_pic.png";
 import "/static/css/Lobby.css";
+import TextField from "@material-ui/core/TextField";
 
 const ws = new W3CWebSocket(
-  `wss://djangochessapp.herokuapp.com/ws/lobby/?token=${localStorage.getItem(
-    "token"
-  )}`
+  `ws://127.0.0.1:8000/ws/lobby/?token=${localStorage.getItem("token")}`
 );
 
 function Lobby({ history }) {
@@ -33,10 +32,12 @@ function Lobby({ history }) {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [open3, setOpen3] = useState(false);
+  const [open4, setOpen4] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState(null);
   const [invitationDest, setInvitationDest] = useState(null);
   const [message, setMessage] = useState(null);
   const [onlineGame, setOnlineGame] = useState(false);
+  const [level, setLevel] = useState(false);
 
   const newGameOptions = [
     { label: "Black Pieces", value: "b" },
@@ -211,6 +212,10 @@ function Lobby({ history }) {
     }
   };
 
+  const handleAcceptClose4 = () => {
+    handlePlayAI();
+  };
+
   const handleDeclineClose = async () => {
     var username;
 
@@ -262,6 +267,10 @@ function Lobby({ history }) {
   };
 
   const handleDeclineClose3 = () => {
+    setOpen3(false);
+  };
+
+  const handleClose4 = () => {
     setOpen3(false);
   };
 
@@ -404,8 +413,43 @@ function Lobby({ history }) {
       });
   };
 
+  const handleAPI = () => {
+    history.push("/documentation");
+  };
+
   const handleViewHistory = () => {
     history.push("/history");
+  };
+
+  const handlePlayAI = async () => {
+    const gameid = `${Math.random()
+      .toString(36)
+      .substring(2, 9)}_${Date.now()}`.substring(0, 10);
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        game_status: "bot",
+        gameId: ".",
+      }),
+    };
+
+    const resp1 = await fetch("/api/game", requestOptions).then((response) =>
+      response.json()
+    );
+
+    if (check_if_authenticated(resp1) === false) {
+      return;
+    }
+
+    history.push({
+      pathname: `/chess/${resp1.gameId}`,
+      state: { level: level },
+    });
   };
 
   return (
@@ -445,6 +489,12 @@ function Lobby({ history }) {
         </div>
         <div className="gpt3_head-content__list-item">
           <button onClick={logout}>Logout</button>
+        </div>
+        <div className="gpt3_head-content__list-item">
+          <button onClick={() => setOpen4(true)}>Play with AI</button>
+        </div>
+        <div className="gpt3_head-content__list-item">
+          <button onClick={handleAPI}>Chess AI API</button>
         </div>
       </div>
       <Dialog
@@ -499,6 +549,30 @@ function Lobby({ history }) {
           </DialogContentText>
           <DialogActions>
             <Button onClick={handleDeclineClose3}>OK</Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={open4}
+        onClose={handleClose4}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Choose A Level"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Please Choose A difficulty Level
+          </DialogContentText>
+          <TextField
+            autoComplete="off"
+            margin="dense"
+            id="name"
+            fullWidth
+            variant="standard"
+            onChange={(e) => setLevel(e.target.value)}
+          />
+          <DialogActions>
+            <Button onClick={handleAcceptClose4}>Start Game</Button>
           </DialogActions>
         </DialogContent>
       </Dialog>

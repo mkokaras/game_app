@@ -67,12 +67,21 @@ function History({ history }) {
             {games && games.length != 0 ? (
               Object.entries(games).map(([key, value]) => (
                 <div key={value} className="gpt3_head-content__list-item_hist">
-                  <div className="gameId">
+                  <div className="hist_item">
                     <p>GameId : {key}</p>
                   </div>
-                  <p>Result : {value[0]}</p>
-                  <p>Color : {value[1] === "b" ? "BLACK" : "WHITE"}</p>
-                  <button onClick={() => handleView(key)}>View</button>
+                  <div className="hist_item">
+                    <p>Result : {value[0] === "W" ? "WIN" : "LOSE"}</p>
+                  </div>
+                  <div className="hist_item">
+                    <p>AI : {value[1] === "B" ? "YES" : "NO"}</p>
+                  </div>
+                  <div className="hist_item">
+                    <p>Color : {value[2] === "b" ? "BLACK" : "WHITE"}</p>
+                  </div>
+                  <div className="hist_item">
+                    <button onClick={() => handleView(key)}>View</button>
+                  </div>
                 </div>
               ))
             ) : (

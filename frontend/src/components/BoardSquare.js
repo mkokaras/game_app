@@ -15,6 +15,9 @@ export default function BoardSquare({
   handleMove,
   game,
   move,
+  moveLocal,
+  handleMoveLocal,
+  isLocal,
 }) {
   const [promotion, setPromotion] = useState(null);
   const [hasPromotion, setHasPromotion] = useState(false);
@@ -31,12 +34,25 @@ export default function BoardSquare({
     if (prevSelect === position) {
       setprevSelect(null);
     } else if (prevSelect !== null) {
-      const output = await handleMove(prevSelect, position);
+      if (isLocal) {
+        const output = await handleMoveLocal(prevSelect, position);
 
-      if (output === true) {
-        setprevSelect(null);
+        console.log(prevSelect);
+        console.log(position);
+
+        if (output === true) {
+          setprevSelect(null);
+        } else {
+          setprevSelect(prevSelect);
+        }
       } else {
-        setprevSelect(prevSelect);
+        const output = await handleMove(prevSelect, position);
+
+        if (output === true) {
+          setprevSelect(null);
+        } else {
+          setprevSelect(prevSelect);
+        }
       }
     } else if (piece !== null) {
       setprevSelect(position);
@@ -53,6 +69,8 @@ export default function BoardSquare({
               prevSelect={prevSelect}
               setprevSelect={setprevSelect}
               move={move}
+              moveLocal={moveLocal}
+              isLocal={isLocal}
             />
           ) : piece ? (
             <Piece piece={piece} position={position}></Piece>
@@ -66,6 +84,8 @@ export default function BoardSquare({
               prevSelect={prevSelect}
               setprevSelect={setprevSelect}
               move={move}
+              moveLocal={moveLocal}
+              isLocal={isLocal}
             />
           ) : piece ? (
             <Piece piece={piece} position={position}></Piece>

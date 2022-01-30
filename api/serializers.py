@@ -1,8 +1,10 @@
+from pyexpat import model
 from re import U
+from attr import field
 from django.contrib.auth import models
 from django.db.models import fields
 from rest_framework import serializers
-from .models import ChessGame, Member, Game, UsersOnline, Invitations, ChessMove
+from .models import ChessGame, Member, Game, UsersOnline, Invitations, ChessMove, LocalFen
 from rest_framework.authtoken.views import Token
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -115,3 +117,9 @@ class ChessMoveSerializer(serializers.ModelSerializer):
         model = ChessMove
         fields = ('chessgameId', 'source',
                   'destination', 'piece', 'promotion', 'duration')
+
+
+class LocalFenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LocalFen
+        fields = ('gameId', 'fen', 'level')

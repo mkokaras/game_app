@@ -2,6 +2,7 @@
 import json
 from pickle import TRUE
 from re import I
+from unittest import result
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from django.contrib.auth.models import User
@@ -33,6 +34,21 @@ def disconnect_from_chess(self):
     send_message = False
 
     game = ChessGame.objects.filter(gameId=self.room_name, result="active")
+
+    game_bot = ChessGame.objects.filter(gameId=self.room_name, result="bot")
+
+    if(len(game_bot) > 0):
+        game_bot = game_bot[0]
+
+        game_bot.result = "UNDEFINED"
+
+        game_bot.save(update_fields=['result'])
+
+        message = {}
+
+        send_message = False
+
+        return message, send_message
 
     invitation = Invitations.objects.filter(
         to_username=self.scope["user"])

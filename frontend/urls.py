@@ -10,7 +10,8 @@ urlpatterns = [
     path('chess/<str:id>', index),
     path('history', index),
     path('moves/<str:id>', index),
-    path('activation/<int:id>/<str:token>', index)
+    path('activation/<int:id>/<str:token>', index),
+    path('documentation', index)
 
     #path('game/<str:id>', index)
 ]

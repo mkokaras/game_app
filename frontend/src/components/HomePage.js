@@ -36,7 +36,7 @@ function HomePage({ history }) {
   return (
     <div className="gpt3__header_head section__padding" id="home">
       <div className="gpt3__header-content_head">
-        <div className="gtp3_head-content__text_head">
+        <div className="gpt3__header-content__text_head">
           <h1 className="gradient__text">
             Play Competitive Chess with anyone around the world
           </h1>

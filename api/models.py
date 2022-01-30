@@ -42,3 +42,9 @@ class ChessMove(models.Model):
     piece = models.CharField(max_length=20, unique=False, default="")
     promotion = models.CharField(max_length=2, unique=False, default="")
     duration = models.IntegerField(default=0)
+
+
+class LocalFen(models.Model):
+    gameId = models.ForeignKey(Game, on_delete=CASCADE)
+    fen = models.CharField(max_length=200, unique=False, default="")
+    level = models.IntegerField(default=0)

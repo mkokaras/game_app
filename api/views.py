@@ -1,4 +1,8 @@
+from unittest import result
+from api.utils.ChessAI import ChessAI
+from typing import Dict, List, Any
 from http import server
+import chess
 from django.contrib import auth
 from django.core.checks import messages
 from django.db.models import query
@@ -8,8 +12,8 @@ from rest_framework import generics, serializers, permissions
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.utils import serializer_helpers
 from rest_framework.views import APIView, exception_handler
-from .models import ChessGame, ChessMove, Game, Member, UsersOnline, Invitations
-from .serializers import ChessMoveSerializer, CreateChessGameSerializer, UpdateChessGameSerializer, UserSerializer, MemberSerializer, GameSerializer, UpdateGameSerializer, UsersOnlineSerializer, InvitationsSerializer, RegisterSerializer, LoginSerializer
+from .models import ChessGame, ChessMove, Game, Member, UsersOnline, Invitations, LocalFen
+from .serializers import ChessMoveSerializer, CreateChessGameSerializer, LocalFenSerializer, UpdateChessGameSerializer, UserSerializer, MemberSerializer, GameSerializer, UpdateGameSerializer, UsersOnlineSerializer, InvitationsSerializer, RegisterSerializer, LoginSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
@@ -25,22 +29,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException
-from django.views import View
-# Create your views here.
-from django.http import HttpResponse, HttpResponseNotFound
-import os
-
-
-class Assets(View):
-
-    def get(self, _request, filename):
-        path = os.path.join(os.path.dirname(__file__), 'static', filename)
-
-        if os.path.isfile(path):
-            with open(path, 'rb') as file:
-                return HttpResponse(file.read(), content_type='application/javascript')
-        else:
-            return HttpResponseNotFound()
+from random import random
+from datetime import datetime
 
 
 class RegisterAPI(generics.GenericAPIView):
@@ -57,13 +47,13 @@ class RegisterAPI(generics.GenericAPIView):
 
         confirmation_token = default_token_generator.make_token(user)
 
-        activate_link_url = "https://djangochessapp.herokuapp.com/activation"
+        activate_link_url = "http://localhost:8000/activation"
 
         activation_link = f'{activate_link_url}/{user.id}/{confirmation_token}'
 
         send_mail(
-            'Django Chess App Confirmatio',
-            'Please confirm your account by clicking on the following link:' + activation_link,
+            'Subject here',
+            'Here is the message.' + activation_link,
             settings.EMAIL_HOST_USER,
             [user.email],
             fail_silently=False,
@@ -106,7 +96,6 @@ class UserAPI(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
     def get_object(self):
-        print("TRIED IT HERE")
         return self.request.user
 
 
@@ -131,14 +120,33 @@ class GameView(APIView):
 
     def post(self, request, format=None):
 
-        print(request.data)
-
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             game_status = serializer.data.get('game_status')
 
             gameId = serializer.data.get('gameId')
+
+            if(gameId == "."):
+                gameId = (str(random())[2:9] + "_" +
+                          str(datetime.now())[-5:])[3:13]
+
+                game = Game(game_status=game_status,
+                            gameId=gameId)
+
+                game.save()
+
+                chessgame = ChessGame(gameId=game,
+                                      result="bot", duration=0)
+
+                member = Member(startingpiece="w", creator=True,
+                                gameId=game, memberId=self.request.user)
+
+                chessgame.save()
+
+                member.save()
+
+                return Response({'GAME': 'OK', 'gameId': gameId}, status=status.HTTP_201_CREATED)
 
             game = Game(game_status=game_status,
                         gameId=gameId)
@@ -147,7 +155,7 @@ class GameView(APIView):
 
             return Response({'Success': 'Game OK', 'gameId': gameId}, status=status.HTTP_201_CREATED)
 
-        return Response({'Fail': 'Bad game'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'GAME': 'NOK'}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -225,8 +233,6 @@ class UpdateGame(APIView):
     serializer_class = UpdateGameSerializer
 
     def patch(self, request, format=None):
-
-        print(request.data)
 
         serializer = self.serializer_class(data=request.data)
 
@@ -474,15 +480,9 @@ class updateInvitation(APIView):
 
         username = UserSerializer(user).data.get('username')
 
-        print(username)
-
         invitation1 = Invitations.objects.filter(from_token=username)
 
         invitation2 = Invitations.objects.filter(to_username=username)
-
-        print(len(invitation1))
-
-        print(len(invitation2))
 
         if(len(invitation1) > 0 or len(invitation2) > 0):
             return Response({'Success': 'OK'}, status=status.HTTP_200_OK)
@@ -503,13 +503,12 @@ class getUserId(APIView):
 
         data = UserSerializer(user).data
 
-        print(data)
-
         return Response(data.get('id'), status=status.HTTP_200_OK)
 
 
 class createChessGame(APIView):
     serializer_class = CreateChessGameSerializer
+    lookup_url_kwarg = 'gameId'
 
     def post(self, request, format=None):
 
@@ -533,6 +532,17 @@ class createChessGame(APIView):
             return Response({'Success': 'ChessGame OK'}, status=status.HTTP_201_CREATED)
 
         return Response({'Fail': 'Bad game'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        gameId = request.GET.get(self.lookup_url_kwarg)
+
+        game = ChessGame.objects.filter(gameId=gameId, result="bot")
+
+        if(len(game) > 0):
+            return Response({'Active': 'OK'})
+
+        else:
+            return Response({'Active': 'NOK'})
 
 
 class chessMove(APIView):
@@ -574,13 +584,9 @@ class UpdateChessGame(APIView):
 
     def patch(self, request, format=None):
 
-        print("View is called normally.")
-
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-
-            print('Serializer is valid.')
 
             gameId = serializer.data.get('gameId')
 
@@ -637,8 +643,6 @@ class getHistory(APIView):
 
             gameId = MemberSerializer(member).data.get('gameId')
 
-            print(gameId)
-
             color = MemberSerializer(member).data.get('startingpiece')
 
             winner = ChessGame.objects.filter(gameId=gameId)
@@ -649,21 +653,40 @@ class getHistory(APIView):
             else:
                 continue
 
-            if(CreateChessGameSerializer(winner).data.get("result") == "WHITE"):
+            res = CreateChessGameSerializer(winner).data.get("result")
+
+            if(res == "WHITE"):
                 color_check = "w"
 
-            else:
+            elif(res == "BLACK"):
                 color_check = "b"
+            elif (res == "BLACKB"):
+                color_check = "bb"
+            elif (res == "WHITEB"):
+                color_check = "wb"
+            elif (res == "bot"):
+                color_check = "bot"
+            elif (res == "UNDEFINED"):
+                color_check = "bot"
 
-            if(color == color_check):
+            if(color_check == "bot" or color_check == "UNDEFINED"):
+                continue
+
+            if(color == color_check[0]):
                 result_history.append("W")
 
-                dict[gameId] = ["W", color]
+                if(len(color_check) > 1):
+                    dict[gameId] = ["W", "B", color]
+                else:
+                    dict[gameId] = ["W", "P", color]
 
             else:
                 result_history.append("L")
 
-                dict[gameId] = ["L", color]
+                if(len(color_check) > 1):
+                    dict[gameId] = ["L", "B", color]
+                else:
+                    dict[gameId] = ["L", "P", color]
 
             game_history.append(gameId)
 
@@ -672,7 +695,6 @@ class getHistory(APIView):
         return Response({'Games': dict}, status=status.HTTP_200_OK)
 
 
-# make shit for colors and crap
 class getMoves(APIView):
     lookup_url_kwarg = 'gameId'
 
@@ -720,3 +742,145 @@ class ActivationView(APIView):
         user.is_active = True
         user.save()
         return Response('Email successfully confirmed')
+
+
+class LocalMove(APIView):
+    lookup_url_kwarg1 = 'gameId'
+    lookup_url_kwarg2 = 'move'
+    serializer_class = LocalFenSerializer
+
+    def get(self, request, format=None):
+
+        move_history = []
+
+        gameId = request.GET.get(self.lookup_url_kwarg1)
+
+        move = request.GET.get(self.lookup_url_kwarg2)
+
+        fens = LocalFen.objects.filter(gameId=gameId)
+
+        if(len(fens) == 0):
+            return Response({'MOVE': 'NOK'}, status=status.HTTP_200_OK)
+
+        fen = LocalFenSerializer(fens[len(fens) - 1]).data.get("fen")
+
+        depth = LocalFenSerializer(fens[len(fens) - 1]).data.get("level")
+
+        chess_game = ChessGame.objects.filter(
+            gameId=gameId)
+
+        if(fen == "empty"):
+            game = ChessAI("w", depth)
+
+            if(game.get_move(move) == False):
+                return Response({'MOVE': 'ILLEGAL'}, status=status.HTTP_400_BAD_REQUEST)
+
+            game.board.push(game.get_move(move))
+
+            bot_move = game.next_move(game.get_depth())
+
+            game.board.push(bot_move)
+
+            new_fen = game.board.fen()
+            # save game.board.fen
+
+            chessmove = ChessMove(chessgameId=chess_game[0],
+                                  source=move[0:2], destination=move[2:4], piece="w", promotion=".", duration=0)
+            chessmove.save()
+
+            chessmove = ChessMove(chessgameId=chess_game[0],
+                                  source=str(bot_move)[0:2], destination=str(bot_move)[2:4], piece="b", promotion=".", duration=0)
+
+            chessmove.save()
+
+        else:
+            game = ChessAI("w", depth)
+
+            game.board = chess.Board(fen)
+
+            if(game.get_move(move) == False):
+                return Response({'MOVE': 'ILLEGAL'}, status=status.HTTP_400_BAD_REQUEST)
+
+            game.board.push(game.get_move(move))
+
+            chessmove = ChessMove(chessgameId=chess_game[0],
+                                  source=move[0:2], destination=move[2:4], piece="w", promotion=".", duration=0)
+            chessmove.save()
+
+            if(game.board.is_game_over() == True):
+                queryset = ChessGame.objects.filter(gameId=gameId)
+
+                if not queryset.exists():
+                    return Response({'Error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+
+                game = queryset[0]
+
+                game.result = "WHITEB"
+
+                game.save(update_fields=['result'])
+
+                return Response({'GAME': 'WINNER'}, status=status.HTTP_200_OK)
+
+            bot_move = game.next_move(game.get_depth())
+
+            if(bot_move == 0):
+                return Response({'GAME': 'NO WINNER'}, status=status.HTTP_200_OK)
+
+            game.board.push(bot_move)
+
+            chessmove = ChessMove(chessgameId=chess_game[0],
+                                  source=str(bot_move)[0:2], destination=str(bot_move)[2:4], piece="b", promotion=".", duration=0)
+
+            chessmove.save()
+
+            if(game.board.is_game_over() == True):
+                queryset = ChessGame.objects.filter(gameId=gameId)
+
+                if not queryset.exists():
+                    return Response({'Error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+
+                game = queryset[0]
+
+                game.result = "BLACKB"
+
+                game.save(update_fields=['result'])
+
+                return Response({'GAME': 'NO WINNER', 'BotMove': str(bot_move)}, status=status.HTTP_200_OK)
+
+            new_fen = game.board.fen()
+            # save game.board.fen
+
+        game = Game.objects.filter(gameId=gameId)
+
+        string = str(bot_move)
+
+        localfen = LocalFen(gameId=game[0], fen=new_fen, level=depth)
+
+        localfen.save()
+
+        return Response({'BotMove': string}, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+
+            gameId = serializer.data.get('gameId')
+
+            fen = serializer.data.get('fen')
+
+            level = serializer.data.get('level')
+
+            if(fen != "empty"):
+                return Response({'FEN': 'NOK'}, status=status.HTTP_400_BAD_REQUEST)
+
+            game = Game.objects.filter(gameId=gameId)
+
+            localfen = LocalFen(gameId=game[0], fen=fen, level=level)
+
+            localfen.save()
+
+            return Response({'FEN': 'OK'}, status=status.HTTP_201_CREATED)
+
+        return Response({'FEN': 'NOK'}, status=status.HTTP_400_BAD_REQUEST)

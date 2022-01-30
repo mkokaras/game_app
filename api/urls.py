@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import ActivationView, LoginAPI, MemberView, GameView, RegisterAPI, UpdateGame, UserAPI, chessMove, createChessGame, getCreator, getGame, getHistory, getMoves, getUserId, getUsername, getOnlineUsers, setInvitations, updateInvitation, UpdateChessGame, getUserByToken
+from .views import ActivationView, LoginAPI, MemberView, GameView, RegisterAPI, UpdateGame, UserAPI, chessMove, createChessGame, getCreator, getGame, getHistory, getMoves, getUserId, getUsername, getOnlineUsers, setInvitations, updateInvitation, UpdateChessGame, getUserByToken, LocalMove
 from rest_framework.routers import DefaultRouter
 #from .views import UserViewSet
 from rest_framework.authtoken.views import obtain_auth_token
@@ -27,5 +27,6 @@ urlpatterns = [
     path('auth/login', LoginAPI.as_view()),
     path('auth/user', UserAPI.as_view()),
     path('auth/logout', knox_views.LogoutView.as_view(), name='knox_logout'),
-    path('activation', ActivationView.as_view())
+    path('activation', ActivationView.as_view()),
+    path('ai-move', LocalMove.as_view())
 ]

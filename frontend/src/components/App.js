@@ -8,6 +8,7 @@ import Lobby from "./Lobby";
 import History from "./History";
 import Moves from "./Moves";
 import Activation from "./Activation";
+import Documentation from "./Documentation";
 import {
   BrowserRouter as Router,
   Switch,
@@ -43,6 +44,7 @@ class App extends Component {
                 path="/activation/:id/:token"
                 component={Activation}
               ></Route>
+              <Route path="/documentation" component={Documentation}></Route>
             </Switch>
           </Router>
         </div>

@@ -8,6 +8,8 @@ export default function Promote({
   prevSelect,
   setprevSelect,
   move,
+  moveLocal,
+  isLocal,
 }) {
   useEffect(() => {
     setprevSelect(null);
@@ -21,7 +23,11 @@ export default function Promote({
             <div
               className="piece-container"
               onClick={async () => {
-                await move(from, to, p);
+                if (isLocal) {
+                  await moveLocal(from, to, p);
+                } else {
+                  await move(from, to, p);
+                }
                 console.log({ from, to, p });
               }}
             >

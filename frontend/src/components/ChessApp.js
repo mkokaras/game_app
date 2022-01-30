@@ -10,6 +10,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import "/static/css/Chess.css";
+import { useLocation } from "react-router-dom";
 
 let ws;
 const chess = new Chess();
@@ -31,10 +32,15 @@ function ChessApp({ history }) {
   const [moveList, setMoveList] = useState([]);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState(null);
+  const [isLocal, setIsLocal] = useState(false);
+  const [lastMove, setLastMove] = useState(null);
+  const [rand, setRand] = useState(null);
+  const [update, setUpdate] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     ws = new W3CWebSocket(
-      `wss://djangochessapp.herokuapp.com/ws/chat/${id}/?token=${localStorage.getItem(
+      `ws://127.0.0.1:8000/ws/chat/${id}/?token=${localStorage.getItem(
         "token"
       )}`
     );
@@ -44,9 +50,6 @@ function ChessApp({ history }) {
 
     ws.onmessage = (e) => {
       var data = JSON.parse(e.data);
-
-      console.log("MESSAGE RECEIVED :");
-      console.log(data);
 
       if (
         (data.message.type === "winner" || data.message.type === "redirect") &&
@@ -84,8 +87,6 @@ function ChessApp({ history }) {
       } else {
         setTurn(data.message.turn);
 
-        console.log("UPDATE BOARD");
-
         if (data.message.source !== localStorage.getItem("token")) {
           setGame(data.message);
           setBoard(data.message.board);
@@ -96,6 +97,66 @@ function ChessApp({ history }) {
       }
     };
   }, []);
+
+  useEffect(() => {
+    async function makeLocalMove() {
+      if (turn == "b" && isLocal) {
+        const moveStr = lastMove.source.concat(lastMove.dest);
+
+        const requestOptions = {
+          headers: {
+            Authorization: `Token ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        };
+
+        const response = await fetch(
+          "/api/ai-move" + "?gameId=" + id + `&move=${moveStr}`,
+          requestOptions
+        ).then((response) => response.json());
+
+        console.log(response);
+
+        const data = response.BotMove;
+
+        const from = data.slice(0, 2);
+
+        const to = data.slice(2, 4);
+
+        await handleMoveLocal(from, to);
+
+        if (response.GAME) {
+          if (response.GAME == "WINNER") {
+            setMessage("You won the game!Redirecting...");
+            setOpen(true);
+
+            let interval;
+
+            interval = setInterval(() => {
+              history.push("/loby");
+              clearInterval(interval);
+            }, 3000);
+
+            return;
+          } else {
+            setMessage("You lost the game.Redirecting...");
+            setOpen(true);
+
+            let interval;
+
+            interval = setInterval(() => {
+              history.push("/loby");
+              clearInterval(interval);
+            }, 3000);
+
+            return;
+          }
+        }
+      }
+    }
+
+    makeLocalMove();
+  }, [turn]);
 
   useEffect(() => {
     if (result && color === "w") {
@@ -123,9 +184,8 @@ function ChessApp({ history }) {
       const resp2 = fetch(
         "/api/update-invitation" + "?username=" + name,
         requestOptions2
-      )
-        .then((response) => response.json())
-        .then((data) => history.push("/loby"));
+      ).then((response) => response.json());
+      //.then((data) => history.push("/loby"));
     } else if (result) {
       history.push("/loby");
     }
@@ -143,10 +203,54 @@ function ChessApp({ history }) {
       requestOptions
     ).then((response) => response.json());
 
-    if (response.gameId) {
+    if (response.gameId && response.game_status !== "bot") {
       onlineGame(response);
+    } else {
+      setIsLocal(true);
+      await localGame();
     }
   }
+
+  async function localGame() {
+    const level = location.state.level;
+    const requestOptions2 = {
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const response2 = await fetch(
+      "/api/start-chess-game" + "?gameId=" + id,
+      requestOptions2
+    ).then((response) => response.json());
+
+    if (response2.Active === "NOK") {
+      history.push("/loby");
+    }
+
+    setColor("w");
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        gameId: id,
+        fen: "empty",
+        level: level,
+      }),
+    };
+
+    const resp2 = await fetch("/api/ai-move", requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+
+    updateLocalGame();
+  }
+
   async function onlineGame(data) {
     const requestOptions3 = {
       headers: {
@@ -286,6 +390,47 @@ function ChessApp({ history }) {
     );
   }
 
+  async function updateLocalGame(pendingPromotion) {
+    const isGameOver = chess.game_over();
+
+    const newGame = {
+      board: chess.board(),
+      pendingPromotion,
+      isGameOver,
+      result: isGameOver ? getGameResult() : null,
+      source: localStorage.getItem("token"),
+      fen: chess.fen(),
+      turn: chess.turn(),
+      type: "bot",
+    };
+
+    setGame(newGame);
+    setBoard(newGame.board);
+    setIsGameOver(newGame.isGameOver);
+    setResult(newGame.result);
+    chess.load(chess.fen());
+    setTurn(newGame.turn);
+  }
+
+  const handleMoveLocal = async (from, to) => {
+    const promotions = chess
+      .moves({ verbose: true })
+      .filter((m) => m.promotion);
+
+    if (promotions.some((p) => `${p.from}:${p.to}` === `${from}:${to}`)) {
+      const pendingPromotion = { from, to, color: promotions[0].color };
+
+      updateLocalGame(pendingPromotion);
+    }
+    const pendingPromotion = game.pendingPromotion;
+
+    if (!pendingPromotion) {
+      const output = await moveLocal(from, to);
+      updateLocalGame();
+      return output;
+    }
+  };
+
   const handleMove = async (from, to) => {
     const promotions = chess
       .moves({ verbose: true })
@@ -302,6 +447,92 @@ function ChessApp({ history }) {
       const output = await move(from, to);
       return output;
     }
+  };
+
+  const moveLocal = async (from, to, promotion) => {
+    let tempMove = { from, to };
+
+    if (promotion) {
+      tempMove.promotion = promotion;
+    }
+    const legalMove = chess.move(tempMove);
+
+    if (legalMove && color !== turn) {
+      if (promotion) {
+        const move_info = {
+          source: from,
+          dest: to,
+          color: "b",
+          type: "move",
+          promotion: promotion,
+        };
+
+        var array = moveList;
+
+        array.push(move_info);
+
+        setMoveList(array);
+
+        setLastMove(move_info);
+      } else {
+        const move_info = {
+          source: from,
+          dest: to,
+          color: "b",
+          type: "move",
+          promotion: ".",
+        };
+
+        var array = moveList;
+
+        array.push(move_info);
+
+        setMoveList(array);
+
+        setLastMove(move_info);
+      }
+    }
+
+    if (legalMove && color === turn) {
+      if (color === "w" && hasStarted === false) {
+        setHasStarted(true);
+      }
+
+      if (promotion) {
+        const move_info = {
+          source: from,
+          dest: to,
+          color: color,
+          type: "move",
+          promotion: promotion,
+        };
+
+        var array = moveList;
+
+        array.push(move_info);
+
+        setMoveList(array);
+
+        setLastMove(move_info);
+      } else {
+        const move_info = {
+          source: from,
+          dest: to,
+          color: color,
+          type: "move",
+          promotion: ".",
+        };
+
+        var array = moveList;
+
+        array.push(move_info);
+
+        setMoveList(array);
+
+        setLastMove(move_info);
+      }
+      return true;
+    } else return false;
   };
 
   const move = async (from, to, promotion) => {
@@ -437,22 +668,6 @@ function ChessApp({ history }) {
     history.push("/loby");
   };
 
-  async function IterateMoves() {
-    moveList.map(async (move) => {
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          Authorization: `Token ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(move),
-      };
-
-      const resp2 = await fetch("/api/chess-move", requestOptions)
-        .then((response) => response.json())
-        .then((data) => console.log(data));
-    });
-  }
   return (
     <div className="chess">
       <div className="container_chess">
@@ -475,6 +690,10 @@ function ChessApp({ history }) {
               game={game}
               move={move}
               color={color}
+              moveLocal={moveLocal}
+              handleMoveLocal={handleMoveLocal}
+              isLocal={isLocal}
+              update={update}
             ></Board>
           </div>
         </div>

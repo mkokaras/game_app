@@ -3,7 +3,16 @@ import BoardSquare from "./BoardSquare";
 import { useEffect } from "react";
 import "/static/css/App.css";
 
-function Board({ board, handleMove, game, move, color }) {
+function Board({
+  board,
+  handleMove,
+  game,
+  move,
+  color,
+  moveLocal,
+  handleMoveLocal,
+  isLocal,
+}) {
   const [prevSelect, setprevSelect] = useState(null);
   const [nextSelect, setnextSelect] = useState(null);
   const [currBoard, setCurrBoard] = useState([]);
@@ -44,6 +53,9 @@ function Board({ board, handleMove, game, move, color }) {
             handleMove={handleMove}
             game={game}
             move={move}
+            moveLocal={moveLocal}
+            handleMoveLocal={handleMoveLocal}
+            isLocal={isLocal}
           ></BoardSquare>
         </div>
       ))}
