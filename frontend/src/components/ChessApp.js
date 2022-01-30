@@ -173,7 +173,9 @@ function ChessApp({ history }) {
 
       const resp1 = fetch("/api/update-chess-game", requestOptions1)
         .then((response) => response.json())
-        .then((data) => {});
+        .then((data) => {
+          console.log(data);
+        });
 
       const requestOptions2 = {
         method: "DELETE",
@@ -244,7 +246,9 @@ function ChessApp({ history }) {
 
     const resp2 = await fetch("/api/ai-move", requestOptions)
       .then((response) => response.json())
-      .then((data) => {});
+      .then((data) => {
+        console.log(data);
+      });
 
     updateLocalGame();
   }
@@ -297,11 +301,15 @@ function ChessApp({ history }) {
 
       const resp2 = await fetch("/api/member", requestOptions1)
         .then((response) => response.json())
-        .then((data) => {});
+        .then((data) => {
+          console.log(data);
+        });
 
       const resp1 = await fetch("/api/update-game", requestOptions2)
         .then((response) => response.json())
-        .then((data) => {});
+        .then((data) => {
+          console.log(data);
+        });
 
       updateGame();
     } else {
@@ -556,7 +564,9 @@ function ChessApp({ history }) {
 
         const resp2 = await fetch("/api/start-chess-game", requestOptions)
           .then((response) => response.json())
-          .then((data) => {});
+          .then((data) => {
+            console.log(data);
+          });
       }
 
       if (promotion) {
@@ -578,7 +588,9 @@ function ChessApp({ history }) {
 
         const resp2 = await fetch("/api/chess-move", requestOptions)
           .then((response) => response.json())
-          .then((data) => {});
+          .then((data) => {
+            console.log(data);
+          });
 
         const move_info = {
           source: from,
@@ -612,7 +624,9 @@ function ChessApp({ history }) {
 
         const resp2 = await fetch("/api/chess-move", requestOptions)
           .then((response) => response.json())
-          .then((data) => {});
+          .then((data) => {
+            console.log(data);
+          });
 
         const move_info = {
           source: from,
