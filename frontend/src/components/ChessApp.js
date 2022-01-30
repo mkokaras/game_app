@@ -115,8 +115,6 @@ function ChessApp({ history }) {
           requestOptions
         ).then((response) => response.json());
 
-        console.log(response);
-
         const data = response.BotMove;
 
         const from = data.slice(0, 2);
@@ -175,7 +173,7 @@ function ChessApp({ history }) {
 
       const resp1 = fetch("/api/update-chess-game", requestOptions1)
         .then((response) => response.json())
-        .then((data) => console.log(data));
+        .then((data) => {});
 
       const requestOptions2 = {
         method: "DELETE",
@@ -246,7 +244,7 @@ function ChessApp({ history }) {
 
     const resp2 = await fetch("/api/ai-move", requestOptions)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {});
 
     updateLocalGame();
   }
@@ -299,17 +297,15 @@ function ChessApp({ history }) {
 
       const resp2 = await fetch("/api/member", requestOptions1)
         .then((response) => response.json())
-        .then((data) => console.log(data));
+        .then((data) => {});
 
       const resp1 = await fetch("/api/update-game", requestOptions2)
         .then((response) => response.json())
-        .then((data) => console.log(data));
+        .then((data) => {});
 
       updateGame();
     } else {
       var value = await isActive();
-
-      console.log(value);
 
       if (value) {
         setColor(creator.startingpiece);
@@ -354,8 +350,6 @@ function ChessApp({ history }) {
       .then((data) => {
         success = data.Success;
       });
-
-    console.log(success);
 
     if (success === "OK") {
       return true;
@@ -562,7 +556,7 @@ function ChessApp({ history }) {
 
         const resp2 = await fetch("/api/start-chess-game", requestOptions)
           .then((response) => response.json())
-          .then((data) => console.log(data));
+          .then((data) => {});
       }
 
       if (promotion) {
@@ -584,7 +578,7 @@ function ChessApp({ history }) {
 
         const resp2 = await fetch("/api/chess-move", requestOptions)
           .then((response) => response.json())
-          .then((data) => console.log(data));
+          .then((data) => {});
 
         const move_info = {
           source: from,
@@ -618,7 +612,7 @@ function ChessApp({ history }) {
 
         const resp2 = await fetch("/api/chess-move", requestOptions)
           .then((response) => response.json())
-          .then((data) => console.log(data));
+          .then((data) => {});
 
         const move_info = {
           source: from,

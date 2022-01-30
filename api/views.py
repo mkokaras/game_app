@@ -47,13 +47,13 @@ class RegisterAPI(generics.GenericAPIView):
 
         confirmation_token = default_token_generator.make_token(user)
 
-        activate_link_url = "http://localhost:8000/activation"
+        activate_link_url = "https://djangochessapp.herokuapp.com/activation"
 
         activation_link = f'{activate_link_url}/{user.id}/{confirmation_token}'
 
         send_mail(
-            'Subject here',
-            'Here is the message.' + activation_link,
+            'Django Chess App Confirmation',
+            'Please confirm your account by clicking on the following link:' + activation_link,
             settings.EMAIL_HOST_USER,
             [user.email],
             fail_silently=False,

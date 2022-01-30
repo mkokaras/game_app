@@ -28,10 +28,7 @@ function Moves({ gameId }) {
   }
 
   useEffect(() => {
-    console.log(gameId);
-
     if (gameId !== null) {
-      console.log("HERE MOVES");
       const requestOptions = {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,

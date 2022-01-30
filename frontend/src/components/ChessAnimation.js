@@ -26,8 +26,6 @@ function ChessAnimation({ moves, interval }) {
 
         let move_temp = { from, to };
 
-        console.log(move_temp);
-
         chess.move(move_temp);
 
         const isGameOver = false;
@@ -49,9 +47,7 @@ function ChessAnimation({ moves, interval }) {
     });
   }, [moves]);
 
-  useEffect(() => {
-    console.log(interval);
-  }, [interval]);
+  useEffect(() => {}, [interval]);
 
   return (
     <div className="chess_animation">

@@ -28,7 +28,6 @@ export default function Promote({
                 } else {
                   await move(from, to, p);
                 }
-                console.log({ from, to, p });
               }}
             >
               <img

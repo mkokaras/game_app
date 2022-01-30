@@ -40,8 +40,6 @@ function Register({ history }) {
 
     const data = new FormData(event.currentTarget);
 
-    console.log(data);
-
     const requestOptions = {
       method: "POST",
       headers: {

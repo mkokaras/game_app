@@ -37,9 +37,6 @@ export default function BoardSquare({
       if (isLocal) {
         const output = await handleMoveLocal(prevSelect, position);
 
-        console.log(prevSelect);
-        console.log(position);
-
         if (output === true) {
           setprevSelect(null);
         } else {

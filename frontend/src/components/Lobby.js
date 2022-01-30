@@ -55,8 +55,6 @@ function Lobby({ history }) {
       },
     };
 
-    console.log("go there");
-
     if (!localStorage.getItem("userid")) {
       const user = await fetch(
         "/api/get-user-id" + "?token=" + localStorage.getItem("token"),
@@ -70,8 +68,6 @@ function Lobby({ history }) {
           localStorage.setItem("userid", data);
         });
     }
-
-    console.log(`My userId is : ${localStorage.getItem("userid")}`);
   };
 
   ws.onmessage = async (e) => {
@@ -87,7 +83,6 @@ function Lobby({ history }) {
       data.message.type === "accept" &&
       localStorage.getItem("userid") === data.message.to_userid.toString()
     ) {
-      console.log("Accepted the game");
       history.push(`/chess/${data.message.gameId}`);
     } else if (
       data.message.type === "decline" &&

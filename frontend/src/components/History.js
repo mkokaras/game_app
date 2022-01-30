@@ -47,14 +47,12 @@ function History({ history }) {
         if (check_if_authenticated(data) == false) {
           return;
         }
-        console.log(data);
         setGames(data.Games);
       });
   }, []);
 
   const handleView = (key) => {
     //history.push(`/moves/${key}`);
-    console.log(key);
     setGame(key);
   };
 
