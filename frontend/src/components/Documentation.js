@@ -63,7 +63,7 @@ function Documentation() {
                 Headers : &#123;Authorization: Token &#123;API-KEY&#125;&#125;
               </div>
               <div class="code_line">
-                Body: &#123;"game_Id": &#123;yourgameId&#125;, "fen": "init",
+                Body: &#123;"game_Id": &#123;yourgameId&#125;, "fen": "empty",
                 "level" : &#123;level&#125; &#125;
               </div>
               <div class="code_line_header">Responses:</div>
@@ -92,7 +92,7 @@ function Documentation() {
               </div>
               <div class="code_line">
                 Paramaters: &#123;"game_Id": &#123;yourgameId&#125;, "move":
-                &#123;fromto&#125;
+                &#123;fromto&#125;&#125;
               </div>
               <div class="code_line_header">Responses:</div>
               <div class="code_line_success">
