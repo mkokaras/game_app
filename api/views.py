@@ -664,6 +664,12 @@ class getHistory(APIView):
                 color_check = "bb"
             elif (res == "WHITEB"):
                 color_check = "wb"
+            elif (res == "DRAW"):
+                dict[gameId] = ["D", "P", color]
+                continue
+            elif (res == "DRAW"):
+                dict[gameId] = ["D", "B", color]
+                continue
             elif (res == "bot"):
                 color_check = "bot"
             elif (res == "UNDEFINED"):
@@ -821,6 +827,20 @@ class LocalMove(APIView):
 
                 return Response({'GAME': 'WINNER'}, status=status.HTTP_200_OK)
 
+            if(game.board.is_fivefold_repetition() or game.board.is_seventyfive_moves()):
+                queryset = ChessGame.objects.filter(gameId=gameId)
+
+                if not queryset.exists():
+                    return Response({'Error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+
+                game = queryset[0]
+
+                game.result = "DRAWB"
+
+                game.save(update_fields=['result'])
+
+                return Response({'GAME': 'DRAW'}, status=status.HTTP_200_OK)
+
             bot_move = game.next_move(game.get_depth())
 
             if(bot_move == 0):
@@ -846,6 +866,20 @@ class LocalMove(APIView):
                 game.save(update_fields=['result'])
 
                 return Response({'GAME': 'NO WINNER', 'BotMove': str(bot_move)}, status=status.HTTP_200_OK)
+
+            if(game.board.is_fivefold_repetition() or game.board.is_seventyfive_moves()):
+                queryset = ChessGame.objects.filter(gameId=gameId)
+
+                if not queryset.exists():
+                    return Response({'Error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+
+                game = queryset[0]
+
+                game.result = "DRAWB"
+
+                game.save(update_fields=['result'])
+
+                return Response({'GAME': 'DRAW', 'BotMove': str(bot_move)}, status=status.HTTP_200_OK)
 
             new_fen = game.board.fen()
             # save game.board.fen

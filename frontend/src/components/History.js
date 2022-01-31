@@ -47,13 +47,25 @@ function History({ history }) {
         if (check_if_authenticated(data) == false) {
           return;
         }
+        console.log(data);
         setGames(data.Games);
       });
   }, []);
 
   const handleView = (key) => {
     //history.push(`/moves/${key}`);
+    console.log(key);
     setGame(key);
+  };
+
+  const renderHist = (value) => {
+    if (value === "W") {
+      return "WIN";
+    } else if (value === "L") {
+      return "LOSE";
+    } else {
+      return "DRAW";
+    }
   };
 
   return (
@@ -69,7 +81,7 @@ function History({ history }) {
                     <p>GameId : {key}</p>
                   </div>
                   <div className="hist_item">
-                    <p>Result : {value[0] === "W" ? "WIN" : "LOSE"}</p>
+                    <p>Result :{renderHist(value[0])}</p>
                   </div>
                   <div className="hist_item">
                     <p>AI : {value[1] === "B" ? "YES" : "NO"}</p>

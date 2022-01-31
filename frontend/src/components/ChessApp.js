@@ -157,6 +157,9 @@ function ChessApp({ history }) {
   }, [turn]);
 
   useEffect(() => {
+    if (isLocal) {
+      return;
+    }
     if (result && color === "w") {
       const requestOptions1 = {
         method: "PATCH",

@@ -15,11 +15,13 @@ function Documentation() {
             calls below and by using your API KEY you are able to send a move
             and get a move back.The first two blocks of requests are needed for
             the initialization of the game.Then you can use the third one and
-            send your moves and get one back as a request.The difficulty level
-            you can choose is between 1 - 5.
+            send your moves and get one back as a request.The responses with NOK
+            are the "negative" responses which means that something went
+            wrong.Same applies to the ILLEGAL MOVE.Note that on every call you
+            must use your API-KEY/Token on the Authorization Header.
           </p>
         </div>
-        <div className="gpt3_head-content__list-item">
+        <div className="gpt3_head-content__list-item_head">
           <p>Request for a game creation</p>
         </div>
         <div className="gpt3_head-content__list-item">
@@ -49,6 +51,17 @@ function Documentation() {
           </div>
         </div>
         <div className="gpt3_head-content__list-item">
+          <p>
+            The above request is a POST Request and is used for requesting a new
+            game.The body of the request contains two values the game_status and
+            gameId which must have the values stated above.It returns a success
+            or an error message and if the call was successful then it also
+            returns the gameId which you should save for the next API calls.As
+            for the color the AI pieces are always black color so your pieces
+            are always white color.
+          </p>
+        </div>
+        <div className="gpt3_head-content__list-item_head">
           <p>Initialize The Game</p>
         </div>
         <div className="gpt3_head-content__list-item">
@@ -77,6 +90,16 @@ function Documentation() {
           </div>
         </div>
         <div className="gpt3_head-content__list-item">
+          <p>
+            The above request is a POST Request and is used for initializing the
+            game with the chess AI.The body of the request contains two values
+            the gameId returned from the previous request and fen.Fen is a
+            standard notation for describing a particular board position of a
+            chess game.The value "empty" is used from the webapp to initialize
+            the ChessAI game.So it is just a convention without further use.
+          </p>
+        </div>
+        <div className="gpt3_head-content__list-item_head">
           <p>Send your move</p>
         </div>
         <div className="gpt3_head-content__list-item">
@@ -108,15 +131,29 @@ function Documentation() {
                 <span>&#123;'GAME': 'WINNER'&#125;</span>
               </div>
               <div class="code_line_success">
-                <span>&#123;'GAME': 'NO WINNER'&#125;</span>
+                <span>&#123;'GAME': 'DRAW'&#125;</span>
               </div>
               <div class="code_line_success">
                 <span>
-                  &#123;'GAME': 'NO WINNER', 'BotMove': &#123;fromto&#125;&#125;
+                  &#123;'GAME': 'DRAW','BotMove': &#123;fromto&#125;&#125;
+                </span>
+              </div>
+              <div class="code_line_success">
+                <span>
+                  &#123;'GAME': 'LOSER', 'BotMove': &#123;fromto&#125;&#125;
                 </span>
               </div>
             </code>
           </div>
+        </div>
+        <div className="gpt3_head-content__list-item">
+          <p>
+            The above request is a GET request.There are two parameteres on this
+            request the gameId and the move.If for example you want to make a
+            move from a2 to a3 then this parameter must be "a2a3".Now the main
+            objective of this request is to return a move from an AI i.e.
+            BotMove : "a7a5".Also,it returns the game's result.
+          </p>
         </div>
       </div>
     </div>
